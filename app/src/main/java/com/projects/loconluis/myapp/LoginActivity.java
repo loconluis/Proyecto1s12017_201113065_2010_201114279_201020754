@@ -1,6 +1,7 @@
 package com.projects.loconluis.myapp;
 
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,10 +10,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -22,12 +28,17 @@ public class LoginActivity extends AppCompatActivity {
     private EditText txt_depto;
     private Button bt_login;
 
-    Conexion cn = new Conexion();
+    //Conexion cn = new Conexion();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        if (android.os.Build.VERSION.SDK_INT > 9)
+        {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         //final Conexion cn = new Conexion();
 
         txt_name = (EditText) findViewById(R.id.txt_name);
@@ -35,6 +46,10 @@ public class LoginActivity extends AppCompatActivity {
         txt_depto = (EditText) findViewById(R.id.txt_depto);
         txt_factory = (EditText) findViewById(R.id.txt_factory);
         bt_login = (Button) findViewById(R.id.bt_login);
+
+
+
+
 
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,29 +59,28 @@ public class LoginActivity extends AppCompatActivity {
                 String fact = txt_factory.getText().toString().trim();
                 String depto = txt_depto.getText().toString().trim();
 
-                //Todo lo de OKHTTP
-                RequestBody formbody = new FormEncodingBuilder()
-                        .add("user", username)
-                        .add("pass", pass)
-                        .add("fact", fact)
-                        .add("dept", depto)
-                        .build();
-                String r= "";
+                Okhttp manejador = new Okhttp(username, pass, fact, depto);
+
+                String result = null;
+
                 try {
-                    r = cn.getString("login", formbody);
-                } catch (IOException e) {
+                    result = manejador.execute("https://trtplttjim.localtunnel.me/login").get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
 
-                if (r == "1"){
-                    Intent in = new Intent(LoginActivity.this, ListActivity.class);
-                    startActivity(in);
-                    finish();
-                    Toast.makeText(v.getContext(), "Bienvenido", Toast.LENGTH_SHORT).show();
-                }else if(r=="0"){
-                    Toast.makeText(v.getContext(), "Usuario o contraseña invalida", Toast.LENGTH_SHORT).show();
+                if(result.equals("1")){
+                    Toast.makeText(getApplicationContext(), "me llegas", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), "No me llegas", Toast.LENGTH_SHORT).show();
                 }
+
+
             }
         });
+
+
     }
 }

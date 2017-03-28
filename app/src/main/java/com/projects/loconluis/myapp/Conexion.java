@@ -19,7 +19,7 @@ public class Conexion {
 
     public String getString(String metodo, RequestBody formBody) throws IOException {
         try {
-            URL url = new URL("https://cffgxyapon.localtunnel.me/"+metodo);
+            URL url = new URL("http://loconluis.pythonanywhere.com"+metodo);
             Request request = new Request.Builder().url(url).post(formBody).build();
             Response response = webClient.newCall(request).execute();
             String response_string = response.body().string();
