@@ -18,6 +18,7 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
@@ -31,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     //Conexion cn = new Conexion();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         if (android.os.Build.VERSION.SDK_INT > 9)
@@ -59,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
                 String fact = txt_factory.getText().toString().trim();
                 String depto = txt_depto.getText().toString().trim();
 
+
+
                 Okhttp manejador = new Okhttp(username, pass, fact, depto);
 
                 String result = null;
@@ -70,11 +73,18 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-
+                //Comienza la validacion para dejar entrar
                 if(result.equals("1")){
-                    Toast.makeText(getApplicationContext(), "me llegas", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Bienvenido", Toast.LENGTH_SHORT).show();
+                    Intent in = new Intent(LoginActivity.this, ListActivity.class);
+                    in.putExtra("user", username);
+                    in.putExtra("pass", pass);
+                    in.putExtra("fact", fact);
+                    in.putExtra("dept", depto);
+                    startActivity(in);
+                    finish();
                 }else{
-                    Toast.makeText(getApplicationContext(), "No me llegas", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Algun dato fue invalido", Toast.LENGTH_SHORT).show();
                 }
 
 

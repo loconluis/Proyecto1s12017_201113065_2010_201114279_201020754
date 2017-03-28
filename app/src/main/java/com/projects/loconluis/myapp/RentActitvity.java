@@ -3,7 +3,6 @@ package com.projects.loconluis.myapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,13 +11,8 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.RequestBody;
-
-import java.io.IOException;
-
-import static android.R.attr.data;
-import static android.R.attr.finishOnCloseSystemDialogs;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class RentActitvity extends AppCompatActivity {
     //Declaracion de variables
@@ -29,7 +23,10 @@ public class RentActitvity extends AppCompatActivity {
     private Button bt_valid;
     private Button bt_back;
 
-    Conexion cn = new Conexion();
+    String rname = null,
+            rpass = null,
+            rfact = null,
+            rdept = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,25 +38,37 @@ public class RentActitvity extends AppCompatActivity {
         np_dias = (NumberPicker) findViewById(R.id.np_dias);
         bt_valid = (Button) findViewById(R.id.bt_valid);
         bt_back = (Button) findViewById(R.id.bt_back);
-        //Todo lo de OKHTTP
-                /*RequestBody formbody = new FormEncodingBuilder()
-                        .add("user", username)
-                        .add("pass", pass)
-                        .add("fact", fact)
-                        .add("depto", depto)
-                        .build();
-                try {
-                    String r = cn.getString("login", formbody);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
 
-        //list[] = r.split("~");
+
+
+        if(extras!=null){
+            rname = (String)extras.get("user");
+            rpass = (String)extras.get("pass");
+            rfact = (String)extras.get("fact");
+            rdept = (String)extras.get("dept");
+        }
+        //PARA DEVOLVER CODIGOS
+        OkhttpCode manejador = new OkhttpCode(rname, rfact, rdept);
+
+        String result = null;
+
+        try {
+            result = manejador.execute("https://trtplttjim.localtunnel.me/codigo").get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        //El que splitea los codigos
+        //String codes[] = result.split("~");
 
         String prueba = "001~002~003~004";
-        final String codigo[] = prueba.split("~");
+        String codigo[] = prueba.split("~");
 
-        ArrayAdapter ad = new ArrayAdapter(this, android.R.layout.simple_spinner_item, codigo);
+        //ARRAY que agregar el split al Spinner
+        ArrayAdapter<String> ad = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, codigo);
         ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         cmb_id.setAdapter(ad);
 
@@ -68,23 +77,14 @@ public class RentActitvity extends AppCompatActivity {
         np_dias.setMaxValue(100);
         np_dias.setMinValue(0);
 
+        //CUANDO SE HACE CLICK EN ALGUN DATO DEL SPINNER
         cmb_id.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //METODOS PARA BUSCAR EN EL SERVIDOR
-                /*String seleccion = cmb_id.getSelectedItem().toString();
-                RequestBody requestSelection = new FormEncodingBuilder()
-                        .add("dato", seleccion)
-                        .build();
-                try {
-                    String data = cn.getString("/articulo/buscar", requestSelection);
-                    String info[] = data.split("~");
-                    lb_name.setText(info[0]);
-                    lb_des.setText(info[1]);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
+                String seleccion = cmb_id.getSelectedItem().toString();
+                //METODO QUE VA A TRAER LOS DATOS DEL OBJETO QUE SE SELECCIONO EN EL SPINNER
+                //OkhttpRentSearch oks = new OkhttpRentSearch(rname, rpass, rfact, rdept, seleccion);
             }
 
             @Override
@@ -92,16 +92,14 @@ public class RentActitvity extends AppCompatActivity {
 
             }
         });
-
-
-
+        //EL BOTON DE ENVIO DE DATOS DE RENTA
         bt_valid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //ENVIAR AL SERVIDOR DE ASP
             }
         });
-
+        //EL BOTON QUE HACE EL REGRESO
         bt_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
