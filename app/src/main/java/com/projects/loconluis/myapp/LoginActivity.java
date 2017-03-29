@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -67,15 +68,17 @@ public class LoginActivity extends AppCompatActivity {
                 String result = null;
 
                 try {
-                    result = manejador.execute("https://trtplttjim.localtunnel.me/login").get();
+                    result = manejador.execute("http://marcosmayen.pythonanywhere.com/login").get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
+
+                Log.d("Resultado", result);
                 //Comienza la validacion para dejar entrar
                 if(result.equals("1")){
-                    Toast.makeText(getApplicationContext(), "Bienvenido", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Bienvenido " + username, Toast.LENGTH_SHORT).show();
                     Intent in = new Intent(LoginActivity.this, ListActivity.class);
                     in.putExtra("user", username);
                     in.putExtra("pass", pass);
