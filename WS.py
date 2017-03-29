@@ -14,11 +14,11 @@ class WS():
 	# AGREGAR VALOR
 	@app.route('/agregar_usuario',methods=['POST'])
 	def agregar():
-		Usuario   = request.form['usuario']
-		Contrasena= request.form['contrasena']
-		Nombre    = request.form['nombre']
-		Empresa	=request.form['empresa']
-		Departamento=request.form['departamento']
+		Usuario     = request.form['user']
+		Contrasena  = request.form['pass']
+		Nombre      = request.form['name']
+		Empresa	    = request.form['fact']
+		Departamento= request.form['dept']
 		return matriz.agregar(Usuario,Contrasena,Nombre,Empresa,Departamento)
 
 	@app.route('/login',methods=['POST'])
@@ -39,20 +39,20 @@ class WS():
 	# CONSULTAR POR LETRA
 	@app.route('/lista_deartamentos',methods=['POST'])
 	def lista_deartamentos():
-		Empresa   = request.form['empresa']
+		Empresa   = request.form['fact']
 		return matriz.retornarDeptosDeEmpresa(Empresa)
 
 	@app.route('/lista_usuarios',methods=['POST'])
 	def lista_usuarios():
-		Empresa   = request.form['empresa']
-		Departamento   = request.form['departamento']
+		Empresa   = request.form['fact']
+		Departamento   = request.form['dept']
 		return matriz.retornarUsuarios(Empresa,Departamento)
 
 	@app.route('/arbol',methods=['POST'])
 	def arbol():
-		Empresa   = request.form['empresa']
-		Departamento   = request.form['departamento']
-		Usuario = request.form['usuario']
+		Empresa        = request.form['fact']
+		Departamento   = request.form['dept']
+		Usuario        = request.form['user']
 		return matriz.retornarID_arbol(Empresa,Departamento,Usuario)
 
 

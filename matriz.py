@@ -42,7 +42,7 @@ class Matriz():
 			EMPRESA.abajo=INFO
 			INFO.arriba=EMPRESA
 			
-			DEPTO.arriba=raiz
+			DEPTO.arriba=self.raiz
 			self.raiz.abajo=DEPTO
 			DEPTO.derecha=INFO
 			INFO.izquierda=DEPTO
@@ -52,7 +52,7 @@ class Matriz():
 			puntero=self.raiz
 			empresa=self.raiz.derecha
 			departamento= self.raiz.abajo
-			temporal=abajo
+			temporal=self.raiz.abajo
 			while departamento!=None:
 				if departamento.departamento==Departamento:
 				# existe el departamento...empresaaa?
@@ -84,7 +84,7 @@ class Matriz():
 					INFO.arriba=DEPTO
 					return "el departamento exisitia, empresa nueva creada y "+Usuario+" agregado"
 				temporal=departamento
-				departamento=abajo.abajo
+				departamento=departamento.abajo
 
 			# quiere decir que no encontro el departamento, a crearlo
 
@@ -114,7 +114,7 @@ class Matriz():
 
 	def sesion(self,empresa,departamento,usuario,contrasena):
 	#determinar si la sesion esta abierta, guardar datos en cookies para uso posterior 
-		if raiz!=None:
+		if self.raiz!=None:
 			temporal=self.raiz.derecha
 			while temporal!=None:
 				if temporal.empresa==empresa:
@@ -255,19 +255,20 @@ class Matriz():
 		nodoAVL.id=id
 		nodoAVL.nombre=nombre
 		nodoAVL.descripcion=descripcion
-		if raiz!=None:
-			arbol=raiz.derecha
+		if self.raiz!=None:
+			arbol=self.raiz.derecha
 			while arbol!=None:
 				if arbol.empresa==empresa:
 					arbol=arbol.abajo
 					while arbol!=None:
 						if arbol.departamento==departamento:
-							if arbol.usuario==usuario:
-								if arbol.arbol==None:
-									arbol.arbol=nodoAVL
-########################################else:
-								# 	arbol.arbol=
-
+							while arbol!=None:
+								if arbol.usuario==usuario:
+									if arbol.arbol==None:
+										arbol.arbol=nodoAVL
+									else:
+										arbol.arbol.cargar(id,nombre,descripcion)
+								arbol=arbol.entra
 							retorno =arbol.usuario
 							arbol=arbol.entra
 							while arbol!=None:
@@ -277,7 +278,8 @@ class Matriz():
 						arbol=arbol.abajo
 					return "No se encontro el departamento"
 				arbol=arbol.derecha
-		return "No se encontro la empresa"
+			return "No se encontro la empresa"
+		return "la matriz esta vacia"
 
 
 
